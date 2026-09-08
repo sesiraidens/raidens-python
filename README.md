@@ -4,7 +4,7 @@
 
 # raidens-python
 
-Snippets e utilitarios Python para projetos de robotica.
+Biblioteca Python completa para robotica: sensores, motores, navegacao e controle PID.
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-d9333b?style=flat)
@@ -16,31 +16,157 @@ Snippets e utilitarios Python para projetos de robotica.
 
 ## Sobre
 
-Biblioteca de funcoes reutilizaveis em Python para controle de tempo, comunicacao serial, operacoes matematicas e leitura de sensores. Cada modulo e independente e pode ser copiado diretamente.
+O **raidens-python** e a biblioteca principal da RAIDENS para programacao de robos em Python. Fornece classes de alta abstracao para sensores, motores e navegacao autonoma.
+
+---
+
+## Estrutura
+
+`
+raidens-python/
+├── src/
+│   ├── sensores.py      # Sensores IR, ultrassonico, cor, giroscopio
+│   ├── motores.py       # Motores DC, servo, passo
+│   ├── robot.py         # Classes de robo (seguidor, parede, resgate)
+│   └── __init__.py
+├── examples/
+│   ├── seguidor_de_linha.py
+│   ├── controlador_de_distancia.py
+│   └── exemplos_sensores.py
+└── README.md
+`
 
 ---
 
 ## Modulos
 
-| Modulo | Funcao |
+### sensores.py
+
+| Classe | Descricao |
 |---|---|
-| delay.py | Controle de tempo sem bloqueio |
-| math_utils.py | Operacoes matematicas (map, clamp, lerp) |
-| serial_utils.py | Comunicacao serial nao-bloqueante |
-| sensor_utils.py | Calibracao e processamento de sensores |
-| motor_utils.py | Controle basico de motores |
-| text_utils.py | Manipulacao de texto |
+| SensorIR | Sensor infravermelho individual |
+| MatrizIR | Matriz de 5 sensores para linha |
+| SensorUltrassonico | HC-SR04 para distancia |
+| SensorCor | TCS34725 para cores |
+| MPU6050 | Acelerometro + giroscopio |
+| Encoder | Encoder de motor |
+
+**Uso basico:**
+`python
+from src.sensores import SensorIR, SensorUltrassonico
+
+ir = SensorIR(pin="A0", nome="frontal")
+leitura = ir.ler()  # 0=preto, 1=branco
+
+ultra = SensorUltrassonico(pin_trigger=9, pin_echo=10)
+distancia = ultra.medir_cm()
+`
+
+### motores.py
+
+| Classe | Descricao |
+|---|---|
+| MotorDC | Motor DC com PWM |
+| DriverL298N | Driver para 2 motores |
+| ServoMotor | Servo SG90 angular |
+| MotorPasso | Motor de passo 28BYJ-48 |
+
+**Uso basico:**
+`python
+from src.motores import DriverL298N, ServoMotor
+
+driver = DriverL298N(5, 2, 3, 6, 4, 7)
+driver.frente(200)
+driver.esquerda(150)
+driver.parar()
+
+servo = ServoMotor(pin=11)
+servo.mover(45)
+servo.suave(90, passo=2, delay=0.02)
+`
+
+### robot.py
+
+| Classe | Descricao |
+|---|---|
+| Robot | Classe base com sensores e motores |
+| SeguidorLinha | Seguidor de linha com PID |
+| RoboParede | Controle de distancia de parede |
+| Resgate | Robo de resgate com busca |
+
+**Uso basico:**
+`python
+from src.robot import SeguidorLinha
+
+robo = SeguidorLinha(kp=2.5, ki=0.8, kd=0.3)
+robo.velocidade_base = 150
+robo.ligar()
+robo.seguir(duracao=30)
+`
 
 ---
 
-## Como Usar
+## Exemplos
 
-1. Copie o modulo desejado para seu projeto
-2. Importe a funcao necessaria
-3. Consulte os exemplos em examples/
+### Seguidor de Linha
+
+`ash
+python examples/seguidor_de_linha.py
+`
+
+Cria robo seguidor de linha com PID. Velocidade base 150, ganhos Kp=2.5, Ki=0.8, Kd=0.3.
+
+### Controle de Distancia
+
+`ash
+python examples/controlador_de_distancia.py
+`
+
+Cria robo que mantem 30cm de distancia de parede. Usa PID com anti-windup.
+
+### Leitura de Sensores
+
+`ash
+python examples/exemplos_sensores.py
+`
+
+Demonstra uso de todos os sensores: IR, matriz IR, ultrassonico e MPU6050.
+
+---
+
+## Integracao
+
+### Com raidens-pid
+
+`python
+from src.robot import SeguidorLinha
+from src.pid import PIDAdvanced
+
+robo = SeguidorLinha()
+robo.pid = PIDAdvanced(kp=3.0, ki=1.0, kd=0.5)
+robo.pid.set_integral_limits(-50, 50)
+`
+
+### Com raidens-opencv
+
+`python
+from src.sensores import SensorCor
+
+sensor = SensorCor()
+cor = sensor.detectar_cor()
+print(f"Cor detectada: {cor}")
+`
+
+---
+
+## Dependencias
+
+Nenhuma dependencia externa obrigatoria. Apenas Python 3.7+ padrao.
 
 ---
 
 ## Equipe
 
 **RAIDENS - SESI Aluminio 192**
+
+Desenvolvido para uso interno da equipe. Licenciado sob MIT.
