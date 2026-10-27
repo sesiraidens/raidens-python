@@ -203,3 +203,4 @@ class Resgate(Robot):
         print("Resgate finalizado.")
 
 
+
