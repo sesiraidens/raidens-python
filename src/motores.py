@@ -224,3 +224,4 @@ class MotorPasso:
         """Reseta posicao."""
         self.posicao_atual = 0
 
+
