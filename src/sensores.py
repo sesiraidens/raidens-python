@@ -269,3 +269,4 @@ class Encoder:
     def reset(self):
         """Reseta contador."""
         self.contador = 0
+
