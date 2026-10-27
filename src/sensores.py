@@ -270,3 +270,4 @@ class Encoder:
         """Reseta contador."""
         self.contador = 0
 
+
