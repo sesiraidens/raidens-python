@@ -202,3 +202,4 @@ class Resgate(Robot):
         self.parar()
         print("Resgate finalizado.")
 
+
