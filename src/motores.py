@@ -225,3 +225,4 @@ class MotorPasso:
         self.posicao_atual = 0
 
 
+
