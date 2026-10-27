@@ -223,3 +223,4 @@ class MotorPasso:
     def reset(self):
         """Reseta posicao."""
         self.posicao_atual = 0
+
